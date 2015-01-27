@@ -1,0 +1,277 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+1D Euler time domain
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial\rho}{\partial t}+\frac{\partial m}{\partial x} & = & 0\\
+\frac{\partial m}{\partial t}+\frac{\partial\left(\rho u^{2}+p_{0}+p\right)}{\partial x} & = & 0\\
+\frac{\partial E}{\partial t}+\frac{\partial\left[\left(E+p\right)u\right]}{\partial x} & = & 0
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+with
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\rho e=\rho c_{v}T=\frac{c_{v}}{R}\rho R_{s}T=\frac{c_{v}}{R}\left(p_{0}+p\right)=\frac{1}{\gamma-1}\left(p_{0}+p\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E=\rho e+\rho\tfrac{1}{2}u^{2}=\frac{p_{0}+p}{\left(\gamma-1\right)}+\rho\tfrac{1}{2}u^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If we replace 
+\begin_inset Formula $E$
+\end_inset
+
+ with
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+E=\hat{E}+\frac{p_{0}}{\gamma-1}
+\end{equation}
+
+\end_inset
+
+then
+\begin_inset Formula 
+\[
+\frac{\partial\hat{E}}{\partial t}+\frac{\partial\left(\hat{E}+p_{0}+p\right)u}{\partial x}=0
+\]
+
+\end_inset
+
+so 
+\begin_inset Formula $E$
+\end_inset
+
+ is internal energy per unit volume!
+\end_layout
+
+\begin_layout Section
+Scheme
+\end_layout
+
+\begin_layout Standard
+If we say:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\partial U}{\partial t}+\frac{\partial}{\partial x}\left(F(U)\right)=0
+\]
+
+\end_inset
+
+which is
+\begin_inset Formula 
+\begin{equation}
+\frac{U_{i}^{n+1}-\left(\frac{1}{2}\left(U_{i+1}+U_{i-1}^{^{2}}\right)\right)}{\Delta t}+\frac{F(U_{i+1}^{n})-F(U_{i-1}^{n})}{2\Delta x}=0
+\end{equation}
+
+\end_inset
+
+in its discrete form
+\end_layout
+
+\begin_layout Standard
+then
+\begin_inset Formula 
+\[
+U=\left\{ \begin{array}{c}
+\rho\\
+\rho u\\
+\rho E
+\end{array}\right\} 
+\]
+
+\end_inset
+
+and Lax-Friedrichs says for a middle node
+\begin_inset Formula 
+\[
+U_{i}^{n+1}=\frac{1}{2}\left(U_{i+1}^{n}+U_{i-1}^{n}\right)-\lambda\left(F\left(U_{i+1}^{n}\right)-F(U_{i-1}^{n})\right)
+\]
+
+\end_inset
+
+with
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\lambda=\frac{\Delta t}{2\Delta x}
+\]
+
+\end_inset
+
+Total domain length: 
+\begin_inset Formula $L$
+\end_inset
+
+.
+ If number of gridpoints is 3, one left, one right, than 
+\begin_inset Formula $dx=L/(gp-1$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+L
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Right wall bc
+\end_layout
+
+\begin_layout Standard
+At a wall:
+\begin_inset Formula 
+\[
+m=0
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial x}\left(F(U)\right)\approx\frac{F\left(U_{i}^{n}\right)-F(U_{i-1}^{n})}{\Delta x}
+\]
+
+\end_inset
+
+but
+\end_layout
+
+\begin_layout Section
+Left pressure bc
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial x}\left(F(U)\right)\approx\frac{F\left(U_{i+1}^{n}\right)-F(U_{i}^{n})}{\Delta x}
+\]
+
+\end_inset
+
+for continuity, energy for momentum:
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial x}\left(F(U)\right)\approx\frac{\left[\rho u^{2}+p\right]_{i+1}-(\rho u^{2})|_{i}-P_{pres}}{\Delta x}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
