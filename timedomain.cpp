@@ -46,18 +46,12 @@ int main(int argc,char *argv[]){
   initothertrace(10,nltracer);
 
 
-
   // Create results dir, put all stuff in
-
-  // Create a directory for results
   mkdir(dir,S_IRWXU | S_IRWXG);
   // Empty this directory
   system("rm results/*");
 
   td::Tube t(L,gp);
-
-
-
 
 
   int nsaves_per_period=50;

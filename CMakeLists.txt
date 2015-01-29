@@ -23,14 +23,15 @@ set (CMAKE_GENERAL "${CMAKE_GENERAL} -std=c++11 -pipe -O2 -fPIC -Wall \
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_GENERAL} ${CMAKE_GCC}")
 
 # link_directories(${link_directories} /usr/local/lib)
+set (tdir /home/anne/wip/tmtubes/src)
 include_directories(
-  ../tmtubes/src/nonlinear/sys
-  ../tmtubes/src/nonlinear/seg
-  ../tmtubes/src/nonlinear/geom
-  ../tmtubes/src/nonlinear/geom/grid
-  ../tmtubes/src/common
-  ../tmtubes/src/common/gas
-  ../tmtubes/src/common/solid
+  ${tdir}/nonlinear/sys
+  ${tdir}/nonlinear/seg
+  ${tdir}/nonlinear/geom
+  ${tdir}/nonlinear/geom/grid
+  ${tdir}/common
+  ${tdir}/common/gas
+  ${tdir}/common/solid
   src
   )
 AUX_SOURCE_DIRECTORY(src src)
