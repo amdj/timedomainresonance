@@ -51,7 +51,7 @@ add_library(sources ${src})
 set_source_files_properties(timedomain.i PROPERTIES CPLUSPLUS ON)
 set_source_files_properties(timedomain.i PROPERTIES SWIG_FLAGS "-py3")
 set_source_files_properties(timedomain.i PROPERTIES SWIG_FLAGS "-Wextra")
-
+set_source_files_properties(timedomain.i PROPERTIES SWIG_FLAGS "-includeall")
 swig_add_module(timedomaineuler python timedomain.i)
 swig_link_libraries(timedomaineuler sources nonlin armadillo ${PYTHON_LIBRARIES})
 

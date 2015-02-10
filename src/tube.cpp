@@ -1,8 +1,6 @@
 #include "tube.h"
 
 namespace td{
-
-  // Definition of a Globalconf in this namespace. Is initialized in main()
   tasystem::Globalconf gc;
 
   d Tube::pleft(d t){
@@ -12,15 +10,25 @@ namespace td{
     return pleft;
 
   }
-  Tube::Tube(d L,int gp): L(L),gp(gp),sol(SolutionInstance(gp))  {
+  Tube::Tube(d L,int gp):
+    L(L),
+    gp(gp),
+    sol(SolutionInstance(gp))  {
+
     TRACE(15,"Tube::Tube()");
     dx=L/(gp-1);
     VARTRACE(15,gp);
     sol.setrho(gc.rho0());
   }
 
-  void Tube::DoIntegration(d dt){
+  void Tube::DoIntegration(d dt,int n){
     TRACE(14,"Tube::DoIntegration()");
+    int integrations=0;
+    while(integrations<n){
+      Integrate(dt);
+    }
+  }
+  void Tube::Integrate(d dt){
 
     // Define new time
     d newt=t+dt;
@@ -41,8 +49,8 @@ namespace td{
       d momfluxl=ip0.rho()*pow(ip0.u(),2)+pleft(t);
       m=ip0.m()-la*(ip1.Mflux()-momfluxl);
       rhoE=ip0.rhoE()-la*(ip1.Eflux()-ip0.Eflux());
-      newsolgp.set(rho,m,rhoE);
-      newsol.set(i,newsolgp);
+      newsolgp.setData(rho,m,rhoE);
+      newsol.setData(i,newsolgp);
 
     } // Leftmost node
     // TRACE(15,"leftmost done");
@@ -55,8 +63,8 @@ namespace td{
       m=0.5*(im1.m()+ip1.m())-lambda*(ip1.Mflux()-im1.Mflux());
       rhoE=0.5*(im1.rhoE()+ip1.rhoE())-lambda*(ip1.Eflux()-im1.Eflux());
 
-      newsolgp.set(rho,m,rhoE);
-      newsol.set(i,newsolgp);
+      newsolgp.setData(rho,m,rhoE);
+      newsol.setData(i,newsolgp);
       
     } // for over all gridpoints in mid
     {
@@ -69,8 +77,8 @@ namespace td{
       m=0;
       rhoE=ip0.rhoE()-la*(0-im1.Eflux());
 
-      newsolgp.set(rho,m,rhoE);
-      newsol.set(i,newsolgp);
+      newsolgp.setData(rho,m,rhoE);
+      newsol.setData(i,newsolgp);
     }
 
     // Finally, update time and solution

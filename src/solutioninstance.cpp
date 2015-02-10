@@ -1,7 +1,4 @@
 #include "solutioninstance.h"
-#include "tube.h"
-
-
 
 namespace td{
 
@@ -14,7 +11,7 @@ namespace td{
     TRACE(15,"SolutionInstance::setrho()");
 
     for(auto gp=gps.begin();gp!=gps.end();gp++){
-      gp->set(rho);
+      gp->setData(rho);
     }
   } // setrho()
   int SolutionInstance::save(std::ofstream& str,data d){

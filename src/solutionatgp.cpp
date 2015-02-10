@@ -5,7 +5,6 @@
 TRACETHIS
 
 namespace td{
-
   extern tasystem::Globalconf gc;
 
   SolutionAtGp::SolutionAtGp() {

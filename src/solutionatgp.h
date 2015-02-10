@@ -3,6 +3,8 @@
 namespace td{
 
   typedef double d;
+  typedef unsigned us;
+
   class SolutionAtGp {
     d rho_,m_=0,rhoE_=0;
   public:
