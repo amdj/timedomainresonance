@@ -12,7 +12,7 @@ namespace td{
     return pleft;
 
   }
-  Tube::Tube(d L,int gp): L(L),gp(gp),sol(SolutionInstance(0,gp))  {
+  Tube::Tube(d L,int gp): L(L),gp(gp),sol(SolutionInstance(gp))  {
     TRACE(15,"Tube::Tube()");
     dx=L/(gp-1);
     VARTRACE(15,gp);
@@ -26,12 +26,10 @@ namespace td{
     d newt=t+dt;
 
     // Define new solutioninstance
-    SolutionInstance newsol=sol;
-
+    SolutionInstance newsol(gp);
+    newsol.setTime(newt);
     SolutionAtGp newsolgp;
     d rho,m,rhoE;
-
-    newsol.setTime(newt);
 
     int i=0;
     // Left boundary
@@ -43,16 +41,13 @@ namespace td{
       d momfluxl=ip0.rho()*pow(ip0.u(),2)+pleft(t);
       m=ip0.m()-la*(ip1.Mflux()-momfluxl);
       rhoE=ip0.rhoE()-la*(ip1.Eflux()-ip0.Eflux());
-      // rhoE=ip0.rhoE()-la*(ip1.Eflux()-.rhoE()*ip0.u()-ip0.u()*(gc.p0+pleft(t)));
       newsolgp.set(rho,m,rhoE);
-      // cout << "pleft: " << pleft(t) <<"\n";
-      // cout << "pleft: " << newsolgp.p() <<"\n";
       newsol.set(i,newsolgp);
 
     } // Leftmost node
     // TRACE(15,"leftmost done");
     // Inner nodes
-    for(i=1;i<gp-2;i++){
+    for(i=1;i<gp-1;i++){
       SolutionAtGp& im1=sol.get(i-1);
       SolutionAtGp& ip1=sol.get(i+1);
       d lambda=dt/(2*dx);
@@ -65,7 +60,7 @@ namespace td{
       
     } // for over all gridpoints in mid
     {
-      i++;
+      i=gp-1;
       SolutionAtGp& im1=sol.get(i-1);
       SolutionAtGp& ip0=sol.get(i);
 
@@ -82,8 +77,5 @@ namespace td{
     sol=newsol;
     t=newt;
   }
-
-
-
 
 } // namespace td

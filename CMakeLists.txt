@@ -1,9 +1,18 @@
 # CMakeList.txt for linear code
-cmake_minimum_required (VERSION 2.8.9)
-
+cmake_minimum_required (VERSION 3.1)
 project(Timedomain1DEuler)
 
-add_definitions(-DTRACERNAME=timedomaineuler -DARMA_USE_BLAS -DARMA_USE_LAPACK)
+FIND_PACKAGE(SWIG REQUIRED)
+INCLUDE(${SWIG_USE_FILE})
+FIND_PACKAGE(PythonLibs)
+
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+SET(CMAKE_SWIG_FLAGS "-Wall")
+
+
+add_definitions(-DTRACERNAME=timedomaineulertracer -DARMA_USE_BLAS -DARMA_USE_LAPACK)
 
 ############################## Not so often changed
 
@@ -15,7 +24,7 @@ add_definitions(-DTRACERNAME=timedomaineuler -DARMA_USE_BLAS -DARMA_USE_LAPACK)
 
 set (CMAKE_GCC " -Wno-unused-function  -ffunction-sections -fdata-sections -Wno-unused-local-typedefs -Wno-empty-body")
 
-set (CMAKE_GENERAL "${CMAKE_GENERAL} -std=c++11 -pipe -O2 -fPIC -Wall \
+set (CMAKE_GENERAL "${CMAKE_GENERAL} -march=native -std=c++11 -pipe -O2 -fPIC -Wall \
  -Wextra -Wno-unused-parameter \
  -Wno-unused-variable -Wno-unused-but-set-variable \
  -Wno-return-local-addr -Wno-cpp  -Wno-address")
@@ -25,6 +34,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_GENERAL} ${CMAKE_GCC}")
 # link_directories(${link_directories} /usr/local/lib)
 set (tdir /home/anne/wip/tmtubes/src)
 include_directories(
+  # ${PYTHON_INCLUDE}
   ${tdir}/nonlinear/sys
   ${tdir}/nonlinear/seg
   ${tdir}/nonlinear/geom
@@ -36,9 +46,14 @@ include_directories(
   )
 AUX_SOURCE_DIRECTORY(src src)
 link_directories(/home/anne/bin/lib)
-add_executable(timedomaineuler timedomain.cpp ${src})
 
-target_link_libraries(timedomaineuler nonlin armadillo boost_program_options)
+add_library(sources ${src})
+set_source_files_properties(timedomain.i PROPERTIES CPLUSPLUS ON)
+set_source_files_properties(timedomain.i PROPERTIES SWIG_FLAGS "-py3")
+set_source_files_properties(timedomain.i PROPERTIES SWIG_FLAGS "-Wextra")
+
+swig_add_module(timedomaineuler python timedomain.i)
+swig_link_libraries(timedomaineuler sources nonlin armadillo ${PYTHON_LIBRARIES})
 
 
 
