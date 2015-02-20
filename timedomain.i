@@ -1,7 +1,14 @@
 %module timedomaineuler
 %{
+  #define PY_ARRAY_UNIQUE_SYMBOL npy_array_api
+  /* #define NO_IMPORT_ARRAY */
+  #define SWIG_FILE_WITH_INIT
+  #include <cerrno>
+  #include <cstdlib>
   #include "vtypes.h"
+  #include "arma_numpy.h"
   #include "tube.h"
+
   #include "globalconf.h"
   SPOILNAMESPACE
     namespace td{
@@ -9,7 +16,34 @@
   }
 %}
 
+/* Call import_array() on loading module*/
+%init%{
+  cout << "Import array called\n";
+  import_array();
+%}
 
+// A better way is the following
+// Convert from numpy to vd and vice versa
+class vd{
+ public:
+  virtual ~vd();
+};
+
+%typemap(in) const vd& INPUT {
+  PyArrayObject* arr = (PyArrayObject*) PyArray_FROM_OTF($input, NPY_DOUBLE, NPY_IN_ARRAY);
+  if(arr==NULL)
+    return NULL;
+  int ndims=PyArray_DIM(arr,0);
+  if(ndims!=1){
+    PyErr_SetString(PyExc_TypeError,"Number of dimensions not equal to 1");
+    return NULL;
+  }
+  $1= vd_from_npy(arr);
+}
+%typemap(out) vd {
+  cout << "Hoi\n";
+  $result=npy_from_vd($1);
+}
 typedef double d;
 typedef unsigned us;
 
@@ -83,6 +117,8 @@ namespace td{
     SolutionInstance(int gp);
     ~SolutionInstance(){}
     d getTime() const;
+    vd getrho() const;
+    vd getp() const;
     void setTime(d t);
     void setData(us i,SolutionAtGp& sol);
     SolutionAtGp& get(us i);

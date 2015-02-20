@@ -14,6 +14,12 @@ namespace td{
       gp->setData(rho);
     }
   } // setrho()
+  vd SolutionInstance::getrho() const{
+    return gpsol_to_python(gps,&SolutionAtGp::rho);
+  }
+  vd SolutionInstance::getp() const{
+    return gpsol_to_python(gps,&SolutionAtGp::p);
+  }
   int SolutionInstance::save(std::ofstream& str,data d){
     TRACE(15,"SolutionInstance::save()");
     if(d==data::p)

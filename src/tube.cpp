@@ -5,7 +5,8 @@ namespace td{
 
   d Tube::pleft(d t){
     d pleft=std::sin(gc.getomg()*t);
-    // cout << "t:"<< t<<endl;
+    cout << "t:"<< t<<endl;
+    cout << "omg:" << gc.getomg()<< endl;
     // cout << "pleft:"<< pleft<<endl;
     return pleft;
 
@@ -26,6 +27,7 @@ namespace td{
     int integrations=0;
     while(integrations<n){
       Integrate(dt);
+      integrations++;
     }
   }
   void Tube::Integrate(d dt){
