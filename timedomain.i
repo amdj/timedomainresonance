@@ -35,13 +35,12 @@ class vd{
     return NULL;
   int ndims=PyArray_DIM(arr,0);
   if(ndims!=1){
-    PyErr_SetString(PyExc_TypeError,"Number of dimensions not equal to 1");
+    // PyErr_SetString(PyExc_TypeError,"Number of dimensions not equal to 1");
     return NULL;
   }
   $1= vd_from_npy(arr);
 }
 %typemap(out) vd {
-  cout << "Hoi\n";
   $result=npy_from_vd($1);
 }
 typedef double d;
@@ -95,46 +94,33 @@ namespace tasystem{
 
 namespace td{
 
-  class SolutionAtGp {
-  public:
-    const d& rho() const;
-    const d& m() const;
-    const d& rhoE() const;
-    d u() const;
-    d ekin() const;
-    d estat() const;
-    d p() const;
-
-    d Cflux() const;
-    d Mflux() const;
-    d Eflux() const;
-    SolutionAtGp();
-    ~SolutionAtGp(){}
-    void setData(d rho,d m=0,d rhoE=0);
-  };
   class SolutionInstance{
   public:
-    SolutionInstance(int gp);
+    SolutionInstance(int gp,d rho=1.2);
     ~SolutionInstance(){}
-    d getTime() const;
-    vd getrho() const;
-    vd getp() const;
+    vd rho() const;
+    vd p() const;
+    vd u() const;
     void setTime(d t);
-    void setData(us i,SolutionAtGp& sol);
-    SolutionAtGp& get(us i);
     void setrho(d rho);
   };
 
   tasystem::Globalconf gc;
 
   class Tube{
+    virtual void Integrate(d dt)=0;
   public:
-    Tube(double L,int gp);
-    ~Tube(){}
+    Tube(double L,int gp) throw(int);
+    virtual ~Tube();
     SolutionInstance& getSol();
     void setSol(const SolutionInstance& sol);
     void DoIntegration(d dt,int n=1);
     d getTime();
+  };
+  class TubeLF:public Tube{
+    virtual void Integrate(d dt);
+  public:
+    TubeLF(d L,int gp);
   };
 }
 

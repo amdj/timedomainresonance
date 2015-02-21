@@ -11,6 +11,9 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(CMAKE_SWIG_FLAGS "-Wall")
 
+add_definitions(-DNDEBUG)	#This is for BOOST functions, and to disable assertions!
+# add_definitions(-DTRACER=0)
+add_definitions(-DEIGEN_NO_DEBUG -DARMA_NO_DEBUG)
 
 add_definitions(-DTRACERNAME=timedomaineulertracer -DARMA_USE_BLAS -DARMA_USE_LAPACK)
 
