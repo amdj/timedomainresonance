@@ -17,7 +17,6 @@ namespace td{
   extern tasystem::Globalconf gc;
 
   class SolutionInstance{
-
     vd rho_,m_,rhoE_;
     d time=0;
   public:
@@ -29,9 +28,11 @@ namespace td{
     vd& rho_ref(){ return rho_;}
     vd& m_ref() {return m_;}
     vd& rhoE_ref() {return rhoE_;}    
+
     const vd& rho() const {return rho_;}
     const vd& m() const {return m_;}
     const vd& rhoE() const {return rhoE_;}
+
     vd p() const {return estat()*(gc.gas.gamma(gc.T0)-1);}
     vd u() const {return m()/rho();}
     vd ekin() const { return 0.5*rho()%pow(u(),2);}

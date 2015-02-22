@@ -21,9 +21,8 @@ namespace td {
     d dx, L;              // Grid spacing, total length
     int gp;               // Number of gridpoints
     SolutionInstance sol; // Solutions at time instances
-    d t = 0;              // Current time
     d pleft(d t);         // Compute pressure bc
-    virtual void Integrate(d dt) = 0;
+    virtual SolutionInstance Integrate(d dt) = 0;
 
   public:
     Tube(double L, int gp) throw(int);
@@ -31,18 +30,23 @@ namespace td {
     SolutionInstance &getSol() { return sol; }
     void setSol(const SolutionInstance &sol) { this->sol = sol; }
     void DoIntegration(d dt, int n = 1);
-    d getTime() { return t; }
+    d getTime() { return sol.getTime(); }
   };
   class TubeLF : public Tube { // Using Lax-Friedrichs method
   protected:
-    virtual void Integrate(d dt);
+    virtual SolutionInstance Integrate(d dt);
+  public:
+    using Tube::Tube;
 
+  };
+  class TubeMCM : public Tube { // Using Lax-Friedrichs method
+  protected:
+    virtual SolutionInstance Integrate(d dt);
   public:
     using Tube::Tube;
 
   };
 } // namespace td
-
 
 
 #endif // TUBE_H

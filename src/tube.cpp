@@ -21,17 +21,18 @@ d Tube::pleft(d t) {
   sol.setrho(gc.rho0());
 }
 
-void Tube::DoIntegration(d dt, int n) {
+void Tube::DoIntegration(d dt, int maxnr) {
   TRACE(14, "Tube::DoIntegration()");
-  int integrationnumber = 0;
-  while (integrationnumber < n) {
-    Integrate(dt);
-    integrationnumber++;
+  int intnr = 0;
+  for (intnr=0; intnr < maxnr; intnr++) {
+    sol=Integrate(dt);		// Update solution  
   }
 }
-void TubeLF::Integrate(d dt) {
+SolutionInstance TubeLF::Integrate(d dt) {
   // Integrate using Lax-Friedrich method
+  d t=sol.getTime();
   d newt = t + dt;
+
   // Define new solutioninstance
   SolutionInstance newsol(gp);
   newsol.setTime(newt);
@@ -84,9 +85,57 @@ void TubeLF::Integrate(d dt) {
     rhoE(i)+=-la*(0-Eflux(i-1));
   } // End right boundary
 
-  // Finally, update time and solution
-  sol = newsol;
-  t = newt;
+  return newsol;
 }
+  SolutionInstance TubeMCM::Integrate(d dt){ // Integrate using
+					     // MacCormack method
+    d t=sol.getTime();
+    d newt=t+dt;
 
+    d lambda=dt/dx;
+
+    SolutionInstance predictor(gp);
+    {				// Predictor step
+      const vd& oldrho=sol.rho();
+      const vd& oldm=sol.m();
+      const vd& oldrhoE=sol.rhoE();
+    
+      vd& prho=predictor.rho_ref();
+      vd& pm=predictor.m_ref();
+      vd& prhoE=predictor.rhoE_ref();
+      // Fluxes from previous solution
+      vd Cflux=sol.Cflux();
+      vd Mflux=sol.Mflux();
+      vd Eflux=sol.Eflux();
+
+      // Density
+      prho.tail(gp-1)=oldrho.tail(gp-1)
+	-lambda*(Cflux.tail(gp-1)-Cflux.head(gp-1));
+      // The first element
+      prho(0)=oldrho(0)-lambda*(Cflux(1)-Cflux(0));
+
+      // Momentum
+      d oldu0=oldm(0)/oldrho(0);
+      d momfluxl = pow(oldm(0), 2)/oldrho(0) + pleft(t);
+
+      pm.tail(gp-1)=oldm.tail(gp-1)
+	-lambda*(Mflux.tail(gp-1)-Mflux.head(gp-1));
+      // The first element
+      pm(0)=oldm(0)-lambda*(Mflux(1)-momfluxl);
+      pm(gp-1)=0;
+
+      // Energy
+      prhoE.tail(gp-1)=oldrhoE.tail(gp-1)
+	-lambda*(Eflux.tail(gp-1)-Eflux.head(gp-1));
+      // The first element
+      prhoE(0)=oldrhoE(0)-lambda*(Eflux(1)-Eflux(0));
+
+    }
+    SolutionInstance corrector(gp);
+    // Temp test hack:
+    corrector=predictor;
+    corrector.setTime(newt);
+
+    return corrector;
+  }					     // Integrate(dt)
 } // namespace td
