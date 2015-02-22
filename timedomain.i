@@ -107,7 +107,7 @@ namespace td{
     const vd& rho() const;
     const vd& m() const;
     const vd& rhoE() const;
-
+    d getTime() const;
     void setTime(d t);
     void setrho(d rho);
   };
