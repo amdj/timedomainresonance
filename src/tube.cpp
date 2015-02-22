@@ -65,13 +65,13 @@ void TubeLF::Integrate(d dt) {
   {				// Inner nodes
     d lambda = dt/(2*dx);
     rho.subvec(1,gp-2)=0.5*(oldrho.head(gp-2) + oldrho.tail(gp-2));
-    rho.subvec(1,gp-2)+=-lambda*(Cflux.head(gp-2) -Cflux.tail(gp-2));
+    rho.subvec(1,gp-2)+=-lambda*(Cflux.tail(gp-2) -Cflux.head(gp-2));
   
     m.subvec(1,gp-2)=0.5*(oldm.head(gp-2) + oldm.tail(gp-2));
-    m.subvec(1,gp-2)+=-lambda*(Mflux.head(gp-2) -Mflux.tail(gp-2));
+    m.subvec(1,gp-2)+=-lambda*(Mflux.tail(gp-2) -Mflux.head(gp-2));
 
     rhoE.subvec(1,gp-2)=0.5*(oldrhoE.head(gp-2) + oldrhoE.tail(gp-2));
-    rhoE.subvec(1,gp-2)+=-lambda*(Eflux.head(gp-2) -Eflux.tail(gp-2));
+    rhoE.subvec(1,gp-2)+=-lambda*(Eflux.tail(gp-2) -Eflux.head(gp-2));
   } // End inner nodes
 
   {				// Right boundary
