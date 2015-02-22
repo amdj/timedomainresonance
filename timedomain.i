@@ -43,6 +43,10 @@ class vd{
 %typemap(out) vd {
   $result=npy_from_vd($1);
 }
+%typemap(out) vd& {
+  const vd& res=*$1;
+  $result=npy_from_vd(res);
+}
 typedef double d;
 typedef unsigned us;
 
@@ -98,24 +102,34 @@ namespace td{
   public:
     SolutionInstance(int gp,d rho=1.2);
     ~SolutionInstance(){}
-    vd rho() const;
     vd p() const;
     vd u() const;
+    const vd& rho() const;
+    const vd& m() const;
+    const vd& rhoE() const;
+
     void setTime(d t);
     void setrho(d rho);
   };
 
   tasystem::Globalconf gc;
 
-  class Tube{
-    virtual void Integrate(d dt)=0;
+  class Tube {
   public:
-    Tube(double L,int gp) throw(int);
-    virtual ~Tube();
-    SolutionInstance& getSol();
-    void setSol(const SolutionInstance& sol);
-    void DoIntegration(d dt,int n=1);
-    d getTime();
+    d dx, L;              // Grid spacing, total length
+    int gp;               // Number of gridpoints
+    SolutionInstance sol; // Solutions at time instances
+    d t = 0;              // Current time
+    d pleft(d t);         // Compute pressure bc
+    virtual void Integrate(d dt) = 0;
+
+  public:
+    Tube(double L, int gp) throw(int);
+    virtual ~Tube() {}
+    SolutionInstance &getSol();
+    void setSol(const SolutionInstance &sol);
+    void DoIntegration(d dt, int n = 1);
+    d getTime() { return t; }
   };
   class TubeLF:public Tube{
     virtual void Integrate(d dt);

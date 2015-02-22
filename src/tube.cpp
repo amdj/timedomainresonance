@@ -9,7 +9,7 @@ d Tube::pleft(d t) {
   d pleft = std::sin(gc.getomg() * t);
   // cout << "t:" << t << endl;
   // cout << "omg:" << gc.getomg() << endl;
-  cout << "pleft:"<< pleft<<endl;
+  // cout << "pleft:"<< pleft<<endl;
   return pleft;
 }
   Tube::Tube(d L, int gp) throw(int) : L(L), gp(gp), sol(SolutionInstance(gp)) {
@@ -49,31 +49,31 @@ void TubeLF::Integrate(d dt) {
   vd Mflux=sol.Mflux();
   vd Eflux=sol.Eflux();
 
-  // std::cout << "poL" << sol.p()(0) << std::endl;
   {  // Left boundary
     d la = dt/dx;
     rho(0) = oldrho(0);
     rho(0)+=-la*(Cflux(1)-Cflux(0));
     d oldu0=oldm(0)/oldrho(0);
     // std::cout << "oldu:"<< oldu0 << std::endl;
-    d momfluxl = oldrho(0)*pow(oldu0, 2) + pleft(t);
+    d momfluxl = pow(oldm(0), 2)/oldrho(0) + pleft(t);
     m(0) = oldm(0);
     m(0)+=-la*(Mflux(1)-momfluxl);
     rhoE(0) = oldrhoE(0);
     rhoE(0)+=-la*(Eflux(1)-Eflux(0));
-
   } //  End left boundary
+
   {				// Inner nodes
     d lambda = dt/(2*dx);
-    rho.subvec(1,gp-2)=0.5*(oldrho.subvec(0,gp-3) + oldrho.subvec(2,gp-1));
-    rho.subvec(1,gp-2)+=-lambda*(Cflux.subvec(0,gp-3) -Cflux.subvec(2,gp-1));
+    rho.subvec(1,gp-2)=0.5*(oldrho.head(gp-2) + oldrho.tail(gp-2));
+    rho.subvec(1,gp-2)+=-lambda*(Cflux.head(gp-2) -Cflux.tail(gp-2));
   
-    m.subvec(1,gp-2)=0.5*(oldm.subvec(0,gp-3) + oldm.subvec(2,gp-1));
-    m.subvec(1,gp-2)+=-lambda*(Mflux.subvec(0,gp-3) -Mflux.subvec(2,gp-1));
+    m.subvec(1,gp-2)=0.5*(oldm.head(gp-2) + oldm.tail(gp-2));
+    m.subvec(1,gp-2)+=-lambda*(Mflux.head(gp-2) -Mflux.tail(gp-2));
 
-    rhoE.subvec(1,gp-2)=0.5*(oldrhoE.subvec(0,gp-3) + oldrhoE.subvec(2,gp-1));
-    rhoE.subvec(1,gp-2)+=-lambda*(Eflux.subvec(0,gp-3) -Eflux.subvec(2,gp-1));
+    rhoE.subvec(1,gp-2)=0.5*(oldrhoE.head(gp-2) + oldrhoE.tail(gp-2));
+    rhoE.subvec(1,gp-2)+=-lambda*(Eflux.head(gp-2) -Eflux.tail(gp-2));
   } // End inner nodes
+
   {				// Right boundary
     int i = gp - 1;
     d la = dt/dx;

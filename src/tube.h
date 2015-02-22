@@ -17,7 +17,7 @@ namespace td {
   typedef double d;
 
   class Tube {
-  protected:
+  public:
     d dx, L;              // Grid spacing, total length
     int gp;               // Number of gridpoints
     SolutionInstance sol; // Solutions at time instances

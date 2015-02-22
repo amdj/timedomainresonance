@@ -21,7 +21,7 @@ namespace td{
     vd rho_,m_,rhoE_;
     d time=0;
   public:
-    SolutionInstance(int gp,d rho=1.2);
+    SolutionInstance(int gp,d rho=0);
     ~SolutionInstance(){}
     d getTime() const {return time;}
     void setTime(d t) {time=t;}
