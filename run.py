@@ -1,12 +1,5 @@
 #!/usr/bin/python
 
-if(!os.path.isfile('timedomaineuler.py')):
-    os.system('cmake . && make')
-from timedomaineuler import *
-
-from numpy import *
-import os
-import sys
 from argparse import ArgumentParser
 import argparse
 
@@ -28,6 +21,14 @@ parser.add_argument('-n','--saves_per_period',type=int,dest="nr_p_period",
 parser.add_argument('-p','--periods',type=float,dest="periods",
                   default=10,help="Periods to compute")
 args=parser.parse_args()
+
+import os,sys
+if not os.path.isfile('timedomaineuler.py'):
+    os.system('cmake . && make')
+from timedomaineuler import *
+
+from numpy import *
+
 
 globals().update(vars(args))    #Put options in global namespace
 print("Frequency:",f)
